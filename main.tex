@@ -1,0 +1,210 @@
+\documentclass[sigconf,review,anonymous]{article}
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2020
+
+% ready for submission
+%\usepackage{neurips_2020}
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2020}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+     \usepackage[final]{neurips_2020}
+
+% to avoid loading the natbib package, add option nonatbib:
+     %\usepackage[nonatbib]{neurips_2020}
+\usepackage{multirow}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+% \usepackage{hyperref}       % hyperlinks
+% \usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{float} % here for H placement parameter
+% \usepackage{multirow}
+% \usepackage[normalem]{ulem}
+% \useunder{\uline}{\ul}{}
+% \usepackage{xcolor}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[obeyspaces]{url}
+
+
+\title{Realizing Literate Programming using Neural Machine Translation}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+\author{%
+  Anonymous Author(s)
+}
+% \author{%
+  
+%   Hung Phan \\
+%   Department of Computer Science \\
+%   Iowa State University\\
+%   Ames, IA 50011 \\
+%   hungphd@iastate.edu \\
+% }
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Literate Programming (LP) is a programming paradigm that unites natural language with code as one document, which helps the developer to explain the logic of some parts of the code both ways of representation. However, despite having advantages for code understanding,  LP hasn't been popularly applied in practice for two reasons. First, developers are required to specify the code for each natural language description manually which is a tedious and error-prone process. Secondly, supervised machine learning approaches for automatically retrieving code from Natural Language is expensive since it required a big dataset of the parallel corpus with NL and Programming Language. In this paper, we provide a tool InvocMap to realize LP to allow developers for writing the textual description of Method Invocations (MIs) inside code environment and get the correct MIs. Different from other code suggestion tools as AnyCode which was only considered natural language as input, we analyze the input from 2 sources: the NL description and its surrounding context. InvocMap proposes a semi-supervised approach by 3 modules. First, it uses unsupervised Neural Embedding to handle NL description of MIs to a list of possible method names. Second, Machine Translation models are trained from large scale code corpus to learn the structure of MIs given a list of method names and surrounding code context. Third, a program analysis step is proposed to assign local variables to structure of MIs to get the final code. InvocMap provides 2 modes of input for describing MIs for developers: from method names directly and from natural language description. By evaluation with training data from 1000 Java high-quality projects, we got the accuracy as up to 90\% for MI suggestion from method names and over 60\% for MI suggestion from NL description, which is outperforming the prior work AnyCode and showing the potential of realizing LP which is specified for supporting NL descriptions of MIs.
+\end{abstract}
+
+\section{Introduction}
+\section{The \textit{InvocMap} Model}
+\subsection{Problem Formulation}
+\subsection{Code and Natural Language tokenization}
+\subsection{Neural Embedding based method names inference}
+\subsection{Structured AST generation}
+\subsection{Assigning variables to Structured AST}
+\subsection{Ranking translated candidates }
+\section{Evaluation}
+\subsection{Data Preparation}
+\begin{table}[]
+\centering
+\begin{tabular}{|l|r|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Item}}                & \multicolumn{1}{c|}{\textbf{Number}} \\ \hline
+Java projects                                      & 1000                                 \\ \hline
+Size of Neural Embedding (NE) corpus               & 1770000                              \\ \hline
+Size of Machine Translation corpus                 & 800000                               \\ \hline
+Size of extrinsic corpus for NE                    & 120                                  \\ \hline
+Size of extrinsic corpus for NL to code evaluation & 100                                  \\ \hline
+Number of developers conduct in study of Q1        & 2                                    \\ \hline
+Number of code snippet with NL in Q1               & 40                                   \\ \hline
+\end{tabular}
+\end{table}
+\subsection{Baseline Method}
+\subsection{Q1. How developers need for code suggestion from Method Name and from Natural Language}
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|r|r|r|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Input}} & \multicolumn{1}{l|}{\textbf{Cannot}} & \multicolumn{1}{l|}{\textbf{SomeParts}} & \multicolumn{1}{l|}{\textbf{AllParts}} \\ \hline
+Core Method Name                     & 10\%                                 & 35\%                                    & 55\%                                   \\ \hline
+Natural Language                     & 40\%                                 & 20\%                                    & 40\%                                   \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Q2. Accuracy of Neural Embedding for suggesting core method names  from natural language and surrounding code}
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{} & \textbf{PreCode}          & \textbf{PostCode}         & \textbf{Combine}          \\ \hline
+Acccuracy & \multicolumn{1}{r|}{76\%} & \multicolumn{1}{r|}{76\%} & \multicolumn{1}{r|}{93\%} \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Q3. Accuracy of Machine Translation models for inferring structured AST from core method names}
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|r|r|r|r|r|r|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Types of Evaluation}} & \multicolumn{3}{c|}{\textbf{Cross Validation}}                                                                    & \multicolumn{3}{c|}{\textbf{Extrinsic evaluation}}                                                                \\ \hline
+\multicolumn{1}{|c|}{\textbf{Metric}}              & \multicolumn{1}{c|}{\textbf{Precision}} & \multicolumn{1}{c|}{\textbf{Recall}} & \multicolumn{1}{c|}{\textbf{F1}} & \multicolumn{1}{c|}{\textbf{Precision}} & \multicolumn{1}{c|}{\textbf{Recall}} & \multicolumn{1}{c|}{\textbf{F1}} \\ \hline
+Core Method Name (C-MN)                            & 70.43                                   & 75.89                                & 73.06                            & 62.54                                   & 75.8                                 & 68.53                            \\ \hline
+C-MN and variables                                 & 84.04                                   & 78.98                                & 81.43                            & 86.01                                   & 81.16                                & 83.51                            \\ \hline
+C-MN, variables and terms                          & 89.33                                   & 79.98                                & 84.4                             & 86.88                                   & 81.31                                & 84                               \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Q4. Accuracy of InvocMap model for inferring code for realizing Literate Programming}
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|r|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Approach}} & \multicolumn{1}{c|}{\textbf{Accuracy in Top 1}} \\ \hline
+AnyCode                                 & 44\%                                            \\ \hline
+InvocMap                                & 61.19\%                                         \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|r|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Top result}} & \multicolumn{1}{c|}{\textbf{Accuracy}} \\ \hline
+Top-1                                     & 61.19\%                                \\ \hline
+Top-2                                     & 64.94\%                                \\ \hline
+Top-3                                     & 68.13\%                                \\ \hline
+Top-4                                     & 69.04\%                                \\ \hline
+Top-5                                     & 70.02\%                                \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|r|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Top result}} & \multicolumn{1}{c|}{\textbf{Num of exact-match}} \\ \hline
+InvocMap Top-1                            & 31                                               \\ \hline
+InvocMap Top-10                           & 37                                               \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{1}{|c|}{\textbf{ID}} & \multicolumn{1}{c|}{\textbf{Natural Language / Expected result / Translated result}}        \\ \hline
+\multicolumn{1}{|r|}{33}          & return square root of minDelta for Math                                                     \\ \hline
+\rowcolor[HTML]{DAE8FC} 
+                                  & \cellcolor[HTML]{DAE8FC}                                                                    \\ \cline{1-1}
+\rowcolor[HTML]{DAE8FC} 
+                                  & \multirow{-2}{*}{\cellcolor[HTML]{DAE8FC}Math.sqrt(minDelta)}                               \\ \hline
+\multicolumn{1}{|r|}{44}          & attempt to establish connection to given jdbcUrl DbUser DbPwd for DriverManager             \\ \hline
+\rowcolor[HTML]{DAE8FC} 
+                                  & \cellcolor[HTML]{DAE8FC}                                                                    \\ \cline{1-1}
+\rowcolor[HTML]{DAE8FC} 
+                                  & \multirow{-2}{*}{\cellcolor[HTML]{DAE8FC}DriverManager.getConnection(jdbcUrl,DbUser,DbPwd)} \\ \hline
+\multicolumn{1}{|r|}{2}           & return whether there contains a mapping to key uCode in UnicodeTeX.getMap()                 \\ \hline
+\rowcolor[HTML]{DAE8FC} 
+                                  & \cellcolor[HTML]{DAE8FC}                                                                    \\ \cline{1-1}
+\rowcolor[HTML]{DAE8FC} 
+                                  & \multirow{-2}{*}{\cellcolor[HTML]{DAE8FC}UnicodeTeX.getMap().containsKey(uCode)}            \\ \hline
+\multicolumn{1}{|r|}{80}          & return the minimum of lp.height and height                                                  \\ \hline
+\rowcolor[HTML]{FFCCC9} 
+                                  & Math.min(lp.height,height)                                                                  \\ \hline
+\rowcolor[HTML]{FFCCC9} 
+                                  & Math.min(height,lp.height)                                                                  \\ \hline
+\multicolumn{1}{|r|}{20}          & format now.getTime() into String and append to dateFormatter for SimpleDateFormat           \\ \hline
+\rowcolor[HTML]{FFCCC9} 
+                                  & dateFormatter.format(now.getTime())                                                         \\ \hline
+\rowcolor[HTML]{FFCCC9} 
+                                  & dateFormatter.format(now.getTime()).toString()                                              \\ \hline
+\multicolumn{1}{|r|}{68}          & return a color from default key "MenuItem.acceleratorForeground" for UIManager              \\ \hline
+\rowcolor[HTML]{FFCCC9} 
+                                  & UIManager.getColor("MenuItem.acceleratorForeground")                                        \\ \hline
+\rowcolor[HTML]{FFCCC9} 
+                                  & UIManager.put("MenuItem.acceleratorForeground",color)                                       \\ \hline
+\end{tabular}
+\end{table}
+
+\section{Related Work}
+\section{Conclusion and Future Work}
+
+
+\bibliography{references}{}
+%this may not be right style for nips
+\bibliographystyle{plain}
+
+
+\end{document}
