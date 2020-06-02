@@ -32,6 +32,7 @@
 % \usepackage{xcolor}
 \usepackage[table,xcdraw]{xcolor}
 \usepackage[obeyspaces]{url}
+\usepackage{graphicx}
 
 
 \title{Realizing Literate Programming using Neural Machine Translation}
@@ -64,10 +65,24 @@ Literate Programming (LP) is a programming paradigm that unites natural language
 \end{abstract}
 
 \section{Introduction}
+\section{Background}
 \section{The \textit{InvocMap} Model}
 \subsection{Problem Formulation}
+\begin{figure}
+   
+        \center{\includegraphics[width=\linewidth]
+        {images/InvocMapOverview.png}}
+        \caption{Overview of InvocMap model}
+        \label{figOverview} 
+\end{figure}
+\begin{figure}
+        \center{\includegraphics[width=\linewidth]
+        {images/MotivatingExample.png}}
+        \caption{Motivating Example of InvocMap}
+        \label{figMotivatingExample} 
+\end{figure}
 \subsection{Code and Natural Language tokenization}
-\subsection{Neural Embedding based method names inference}
+\subsection{Neural Embedding based for core method name inference}
 \subsection{Structured AST generation}
 \subsection{Assigning variables to Structured AST}
 \subsection{Ranking translated candidates }
