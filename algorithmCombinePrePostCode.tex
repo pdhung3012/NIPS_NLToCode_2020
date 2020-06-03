@@ -1,0 +1,54 @@
+% \begin{LTXexample}[style=ListingSample,caption={Algorithm for C-MN inference from NL element},label={algmNeuralEmbedding}]
+% \begin{lstlisting}[language=Octave,caption={Algorithm for C-MN inference from NL element},label={algmNeuralEmbedding}]  
+% Input:
+%     Literate Programming Code C;
+%     List of method contexts in training set M[];
+%     Size of list of suggested method names k;
+% Output: 
+%     List of method names O;
+
+% %prepare models by training data
+% preModel <- trainDoc2VecByPreCodeTokens(M)
+% postModel <- trainDoc2VecByPostCodeTokens(M)
+
+% %get list of suggested method names from precode and postcode
+% preMethods <-getClosestMethods(C,preModel,k)
+% postMethods <-getClosestMethods(C,postModel,k)
+
+% %combine 2 list of suggestions
+% O <-combineAndFilter(preMethods,postMethods)
+
+
+% \end{lstlisting}
+
+\begin{algorithm}
+    \caption{Algorithm for C-MN inference from NL element}\label{algmNeuralEmbedding}
+    \hspace*{\algorithmicindent} \textbf{Input:}
+     Literate Programming Code C;
+    List of method contexts in training set M[];
+    Size of list of suggested method names k;
+    \\
+    \hspace*{\algorithmicindent} \textbf{Output:} 
+    List of method names O;
+    \begin{algorithmic}[1]
+    \Procedure{getSuggestedMethodNamesFromNaturalInput}{}
+%    \Procedure{MyProcedure}{$x,y$}
+%     % Input:
+%     \Comment{Input: x}
+%     % Output:
+%     \Comment{Output:y}
+
+    \State $\textit{preModel} \gets \textit{trainDoc2VecByPreCodeTokens(M)} $
+    \Comment{prepare models by training data}
+    \State $\textit{postModel} \gets \textit{trainDoc2VecByPostCodeTokens(M)} $
+    \\
+    \State $\textit{preMethods} \gets \textit{getClosestMethods(C,preModel,k)} $
+    \Comment{get list of suggested method names}
+    \State $\textit{postMethods} \gets \textit{getClosestMethods(C,postModel,k)} $
+    \\
+    \State $\textit{O} \gets \textit{combineAndFilter(preMethods,postMethods)} $
+    \Comment{combine 2 lists of suggestions}
+    
+    \EndProcedure
+    \end{algorithmic}
+    \end{algorithm}
