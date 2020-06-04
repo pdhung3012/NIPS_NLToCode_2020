@@ -34,29 +34,13 @@
 \usepackage[obeyspaces]{url}
 \usepackage{graphicx}
 \usepackage{listings}
+\usepackage{enumerate}
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
-\lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},   
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
-    showstringspaces=false,
-    showtabs=false,                  
-    tabsize=2
-}
+
 
 \lstset{style=mystyle}
 \usepackage{algorithm}
@@ -103,9 +87,39 @@ Literate Programming (LP), which was invented by Donald E. Knuth \cite{001}, is 
 Despite having many advantages, the LP program paradigm has not been used popularly since its appearance in 1984. Based on our knowledge, the most recent application which applied LP is provided by  Haghish et al \cite{005}, which provide support for visualizing LP in HTML format. The most well-known LP dataset is \cite{006}, which provides LP dataset of code which are in the form of combination between Natural Language (NL) and code. \cite{004} studies about the problems which 
 prevent LP to be practical. First, the number of developers who can be good at programming and documenting their code are limited. In the other words, developers seems to be good only at the first observation than the second observation of LP. Secondly, all of LP system like \cite{006} require manually defining the source code related to each natural language description. The cost for manually representing the code by NL and programming language (PL) for every code snippets of large scale corpus is expensive. Thus, it is important to have a system that automatically deriving the code from NL description in a code environment, to make LP feasible.
 \\
-From our knowledge, there is no tools or research projects which work directly on generating code for natural language parts for support LP in Software Engineering (SE) and Machine Learning (ML). However, the problem of generating code from natural language (NL) is one of interesting research problem in SE. In these works, AnyCode \cite{007} provides a solution for synthesizing expression, mostly in the form of Method Invocations (MIs) by proposing the language model called Probabilistic Context Free Grammar (PCFG). Other works applied and optimized Machine Translation (MT) by providing supervised approaches for inferring code from natural description and vice versa. \cite{008} provides a tree based code generation which can be integrated in Recurrent Neural Network (RNN) for Python. \cite{009} applied Statistical Machine Translation (SMT) model for learning pseudo code from actual code for code summarixation. This trend of research require manually annotated data for supervised learning, which is expensive when applied in other types of NL. Although NL description and code can be extracted from large scale code repository, parallel corpus extracted by this way is usually erroneous and contain noise.  Barone  et al. \cite{010} conduct a Python corpus by automatically extracting documentation and implementation of the same Python methods. By the experiment, they show that applying Machine Translation models to this corpus is challenging and their results show low accuracy.
+From our knowledge, there is no tools or research projects which work directly on generating code for natural language parts for support LP in Software Engineering (SE) and Machine Learning (ML). However, the problem of generating code from natural language (NL) is one of interesting research problem in SE. In these works, AnyCode \cite{007} provides a solution for synthesizing expression, mostly in the form of Method Invocations (MIs) by proposing the language model called Probabilistic Context Free Grammar (PCFG). Other works applied and optimized Machine Translation (MT) by providing supervised approaches for inferring code from natural description and vice versa. \cite{008} provides a tree based code generation which can be integrated in Recurrent Neural Network (RNN) for Python. \cite{009} applied Statistical Machine Translation (SMT) model for learning pseudo code from actual code for code summarixation. This trend of research require manually annotated data for supervised learning, which is expensive when applied in other types of NL. Although NL description and code can be extracted from large scale code repository, parallel corpus extracted by this way is usually erroneous and contain noise.  Barone  et al. \cite{010} conduct a Python corpus by automatically extracting documentation and implementation of the same Python methods. By the experiment, they show that applying Machine Translation models to this corpus is challenging since the accuracy on both SMT and Neural Machine Translation (NMT) are low.
+\\
+All of current works on generating code from natural language input like \cite{007,008,009,010} were not designed to support LP. They treat the natural language as the entire input and provide the output as generated code, without considering the information from surrounding code. \cite{010} considered the input as natural description of functions in Java Documentation (JavaDoc) for each functions of Python. AnyCode (\cite{007}) provides a solution for getting MIs by NL queries instead of NL element inside the code. In the other words, the output of expressions generated from AnyCode is consistent regardless the surrounding code.
+\\
+In this paper, we want to realizing Literate Programming by providing InvocMap, a tool that helps developers to define natural language description of method invocations at any locations inside the code environment and automatically suggesting MIs for all descriptions. Unlike prior works, we consider the input as a LP code snippet, which considers code as the combination of sequence of code elements and natural language elements (NL-E). We provide the output as code snippet that all of NL-E were transformed to MIs. To achieve the solution, we provide a semi-supervised approach which combines three techniques: neural embedding to get method names from surrounding context and natural language element; machine translation to get the parsed tree of MIs; Program Analysis to analyze the surrounding context to instrument information to tree to get the final code. We provide following contributions:
+\begin{itemize}
+	\item Provided another viewpoint for considering natural language element with information of code before and after it. 
+	\item Implemented an approach for automatically generating possible method names based on all NL and code information. 
+	\item Built a Machine Translation model which converted from text to tree data structure of Method Invocation.
+	\item Provided a code suggestion tool InvocMap to realizing LP by 2 modes. In the first mode, we allow developers to input method names and other information to get the method invocations. In the second mode, developers can write free form NL elements and get suggested code as list of MIs which the highest ranking suggested option as the most relevant code suggested by InvocMap.
+\end{itemize}
 
 \section{Background}
+In this part, we provide description for important terms we use for this research. Besides terms are wellknown in Software Engineering, we define a set of terms which are mentioned as elements in our approach.
+
+\begin{enumerate}[\indent {}]
+        \item \textbf{Abstract Syntax Tree (AST)} is a tree representation of tokens which are generated from statements and expressions in programming language (PL) (\cite{011}).
+        \item \textbf{Method Invocation (MI)} is one type of AST. MI can be described by combination of 2 elements: the parsed tree and local variables/ literals which are usually located at the leaf level of the tree \cite{012}. 
+        \item \textbf{Structured AST (S-AST)} is the data structure that we defined in this paper. S-AST is the tree representation of MI but doesn't include information about name of local variables/ literals. S-ASTs are extracted by visiting MIs in code corpus and abstracting local variables. An example of S-AST is shown in Figure \ref{figMotivatingExample}.
+        \item \textbf{Core Method Name (C-MN)} is the name of MI which is appeared as the root node of S-AST. For example, in Figure \ref{figMotivatingExample}, the C-MN is \texttt{containsKey}. 
+        \item \textbf{Literate Programming Code Snippet (LP-CS)} is a code snippet that contains one to multiple natural language description (element) for method invocations. LP-CS contains 3 below elements.
+        \item \textbf{Natural Language Element (NL-E), PreCode and PostCode}: NL-E is the description in NL. \textbf{PreCode} of NL-E is the list of code tokens appeared before NL-E. \textbf{PostCode} is the list of code tokens appeared after NL-E. Example of NL-E is shown in Figure \ref{figMotivatingExample}.
+        
+        \item \textbf{Variables and Terms of NL-E}: Variables of NL-E are all tokens related to string and numeric literal along with variables defined in NL-E. Terms of NL-E are tokens of NL-E which are not in list of variables. 
+        
+        
+        
+        
+    \end{enumerate}
+
+
+
+
 \section{The \textit{InvocMap} Model}
 \subsection{Problem Formulation}
 \begin{figure}
@@ -257,7 +271,7 @@ InvocMap Top-10                           & 37                                  
 \section{Related Work}
 \section{Conclusion and Future Work}
 
-
+\clearpage
 \bibliography{references}{}
 %this may not be right style for nips
 \bibliographystyle{plain}
