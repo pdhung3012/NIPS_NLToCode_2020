@@ -1,0 +1,13 @@
+\section{Background}
+In this part, we provide description for important terms and definitions we use for this research. Besides terms are well-known in Software Engineering, we define a set of terms which are used as elements in our approach.
+
+\begin{enumerate}[\indent {}]
+        \item \textbf{Abstract Syntax Tree (AST)} is a tree representation of tokens which are generated from statements and expressions in programming language (PL) \cite{011}.
+        \item \textbf{Method Invocation (MI)} is one type of AST. MI can be described by combination of two elements: the parsed tree and local variables/literals which are usually located at the leaf level of the tree (terminals) \cite{012}. 
+        \item \textbf{Structured AST (S-AST or SAST)} is the data structure that we defined in this paper. S-AST is the tree representation of MI but doesn't include information about name of local variables/literals. S-ASTs are extracted by visiting MIs in code corpus and abstracting local variables. An example of S-AST is shown in Figure \ref{figMotivatingExample}.
+        \item \textbf{Core Method Name (C-MN)} is the name of MI which is appeared as the root node of S-AST. For example, in Figure \ref{figMotivatingExample}, the C-MN is \texttt{containsKey}. 
+        \item \textbf{Literate Programming Code Snippet (LP-CS)} is a code snippet that contains one to multiple natural language description (element) for method invocations. LP-CS contains three following elements.
+        \item \textbf{Natural Language Element (NL-E), PreCode, PostCode}: NL-E is the description in NL. \textbf{PreCode} of NL-E is the list of code tokens appeared before NL-E. \textbf{PostCode} is the list of code tokens appeared after NL-E. Example of NL-E is shown in Figure \ref{figMotivatingExample}.
+        
+        \item \textbf{Variables and Terms of NL-E}: Variables of NL-E are all tokens related to string and numeric literal along with variables defined in NL-E. Terms of NL-E are tokens of NL-E which are not in list of variables. 
+    \end{enumerate}
